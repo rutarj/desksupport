@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Ticket #{{ ticket.id }}</h3>
+<table class="table bg-white border">
+  <tr><th>Requester</th><td>{{ ticket.requester_name }} ({{ ticket.department }})</td></tr>
+  <tr><th>Category</th><td>{{ ticket.category }}</td></tr>
+  <tr><th>Priority</th><td>{{ ticket.priority }}</td></tr>
+  <tr><th>Status</th><td>{{ ticket.status }}</td></tr>
+  <tr><th>Assigned To</th><td>{{ ticket.assigned_to }}</td></tr>
+  <tr><th>Description</th><td>{{ ticket.description }}</td></tr>
+  <tr><th>Created</th><td>{{ ticket.created_at }}</td></tr>
+  <tr><th>Resolved</th><td>{{ ticket.resolved_at or "Not yet" }}</td></tr>
+  {% if ticket.status == "Resolved" %}
+  <tr><th>First contact resolution</th><td>{{ "Yes" if ticket.first_contact else "No" }}</td></tr>
+  <tr><th>Knowledge article used</th><td>{% if linked %}<a href="{{ url_for('kb_detail', article_id=linked.id) }}">{{ linked.title }}</a>{% else %}None{% endif %}</td></tr>
+  {% endif %}
+</table>
+{% if ticket.status != "Resolved" %}
+<form method="post" action="{{ url_for('resolve_ticket', ticket_id=ticket.id) }}" class="bg-white p-3 border rounded">
+  <div class="mb-2"><label class="form-label">Knowledge article used (optional)</label>
+    <select class="form-select" name="article_id">
+      <option value="">None</option>
+      {% for a in articles %}<option value="{{ a.id }}">{{ a.category }}: {{ a.title }}</option>{% endfor %}
+    </select></div>
+  <div class="form-check mb-2"><input class="form-check-input" type="checkbox" name="first_contact" id="fc">
+    <label class="form-check-label" for="fc">Resolved on first contact</label></div>
+  <button class="btn btn-success" type="submit">Mark Resolved</button>
+</form>
+{% endif %}
+<a class="btn btn-link" href="{{ url_for('index') }}">Back to list</a>
+{% endblock %}

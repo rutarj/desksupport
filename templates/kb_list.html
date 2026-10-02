@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Knowledge Base</h3>
+  <a href="{{ url_for('kb_new') }}" class="btn btn-primary">New Article</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-6"><input class="form-control" name="q" value="{{ q }}" placeholder="Search articles"></div>
+  <div class="col-md-3">
+    <select class="form-select" name="category">
+      <option value="all">All categories</option>
+      {% for c in categories %}<option {% if c == category %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3"><button class="btn btn-outline-secondary w-100" type="submit">Search</button></div>
+</form>
+
+<table class="table table-bordered bg-white">
+  <thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Version</th><th>Views</th><th>Helpful</th><th>Updated</th></tr></thead>
+  <tbody>
+    {% for a in articles %}
+    <tr class="{% if a.review_due %}table-warning{% endif %}">
+      <td><a href="{{ url_for('kb_detail', article_id=a.id) }}">{{ a.title }}</a></td>
+      <td>{{ a.category }}</td>
+      <td>{{ a.status }}{% if a.review_due %} <span class="badge bg-warning text-dark">Review due</span>{% endif %}</td>
+      <td>v{{ a.version }}</td>
+      <td>{{ a.view_count }}</td>
+      <td>{% if a.helpful_pct is not none %}{{ a.helpful_pct }}%{% else %}n/a{% endif %}</td>
+      <td>{{ a.updated_at[:10] }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="text-center text-muted">No articles found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

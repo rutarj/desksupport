@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Tickets</h3>
+  <a href="{{ url_for('new_ticket') }}" class="btn btn-primary">New Ticket</a>
+</div>
+
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary {% if status_filter=='all' %}active{% endif %}" href="?status=all">All</a>
+  <a class="btn btn-sm btn-outline-secondary {% if status_filter=='Open' %}active{% endif %}" href="?status=Open">Open</a>
+  <a class="btn btn-sm btn-outline-secondary {% if status_filter=='In Progress' %}active{% endif %}" href="?status=In Progress">In Progress</a>
+  <a class="btn btn-sm btn-outline-secondary {% if status_filter=='Resolved' %}active{% endif %}" href="?status=Resolved">Resolved</a>
+</div>
+
+<table class="table table-bordered bg-white">
+  <thead>
+    <tr>
+      <th>ID</th><th>Requester</th><th>Category</th><th>Priority</th><th>Status</th><th>Age (hrs)</th><th>SLA</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in tickets %}
+    <tr class="{% if t.sla_breached %}table-danger{% endif %}">
+      <td><a href="{{ url_for('ticket_detail', ticket_id=t.id) }}">#{{ t.id }}</a></td>
+      <td>{{ t.requester_name }} ({{ t.department }})</td>
+      <td>{{ t.category }}</td>
+      <td>{{ t.priority }}</td>
+      <td>{{ t.status }}</td>
+      <td>{{ t.age_hours }}</td>
+      <td>{% if t.sla_breached %}<span class="badge bg-danger">Breached</span>{% else %}<span class="badge bg-success">OK</span>{% endif %}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="text-center text-muted">No tickets yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

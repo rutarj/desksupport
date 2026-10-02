@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>New Ticket</h3>
+<form method="post" class="bg-white p-4 rounded border">
+  <div class="mb-3">
+    <label class="form-label">Requester Name</label>
+    <input class="form-control" name="requester_name" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Department</label>
+    <select class="form-select" name="department" required>
+      <option>Finance</option><option>IT</option><option>Operations</option><option>HR</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Category</label>
+    <select class="form-select" name="category" required>
+      <option>Hardware</option><option>Software</option><option>Network</option><option>Account</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Priority</label>
+    <select class="form-select" name="priority" required>
+      <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Assigned To</label>
+    <input class="form-control" name="assigned_to" placeholder="Optional">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Description</label>
+    <textarea class="form-control" name="description" rows="3" required></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">Create Ticket</button>
+</form>
+{% endblock %}

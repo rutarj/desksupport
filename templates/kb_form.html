@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{% if article %}Edit Article (creates v{{ article.version + 1 }}){% else %}New Article{% endif %}</h3>
+<form method="post" class="bg-white p-4 rounded border">
+  <div class="mb-3"><label class="form-label">Title</label>
+    <input class="form-control" name="title" value="{{ article.title if article else '' }}" required></div>
+  <div class="row">
+    <div class="col-md-4 mb-3"><label class="form-label">Category</label>
+      <select class="form-select" name="category">
+        {% for c in categories %}<option {% if article and article.category == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select></div>
+    <div class="col-md-4 mb-3"><label class="form-label">Status</label>
+      <select class="form-select" name="status">
+        {% for s in ['Draft', 'Published', 'Retired'] %}<option {% if article and article.status == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+      </select></div>
+    <div class="col-md-4 mb-3"><label class="form-label">Source policy</label>
+      <input class="form-control" name="source_policy" value="{{ article.source_policy if article and article.source_policy else '' }}" placeholder="Policy this article is based on"></div>
+  </div>
+  <div class="mb-3"><label class="form-label">Steps and guidance</label>
+    <textarea class="form-control" name="body" rows="8" required>{{ article.body if article else '' }}</textarea></div>
+  <button class="btn btn-primary" type="submit">Save</button>
+</form>
+{% endblock %}

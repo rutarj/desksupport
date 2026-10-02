@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Provisioning Simulator</h3>
+<p class="text-muted">Simulates the Active Directory account creation, group assignment, and Intune device
+enrollment steps a service desk performs when onboarding a new hire. No real Azure tenant is called;
+every step is logged below.</p>
+
+<form method="post" class="bg-white p-4 rounded border mb-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Full Name</label>
+      <input class="form-control" name="full_name" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Department</label>
+      <select class="form-select" name="department" required>
+        {% for d in departments %}<option>{{ d }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Device Tag</label>
+      <input class="form-control" name="device_tag" placeholder="LAPTOP-0042" required>
+    </div>
+  </div>
+  <button class="btn btn-primary mt-3" type="submit">Run New Hire Workflow</button>
+</form>
+
+{% if result %}
+<div class="alert alert-info">
+  <strong>AD Account:</strong> {{ result.ad.upn }} — groups: {{ result.ad.groups | join(", ") }}<br>
+  <strong>Device {{ result.device.device_tag }}:</strong>
+  {% if result.device.compliant %}
+    Enrolled and compliant.
+  {% else %}
+    Enrolled, but failed check: {{ result.device.failed_check }}.
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="card p-3 bg-white">
+  <h5>Recent Provisioning Log</h5>
+  <table class="table table-sm">
+    <thead><tr><th>Time</th><th>Action</th><th>Target</th><th>Detail</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for log in logs %}
+      <tr class="{% if log.status == 'Non-Compliant' %}table-warning{% endif %}">
+        <td>{{ log.timestamp }}</td><td>{{ log.action_type }}</td><td>{{ log.target }}</td><td>{{ log.detail }}</td><td>{{ log.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

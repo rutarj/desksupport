@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Dashboard</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ total }}</div><div class="text-muted">Tickets</div></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ open_count }}</div><div class="text-muted">Open</div></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ resolved_count }}</div><div class="text-muted">Resolved</div></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ avg_resolution }}h</div><div class="text-muted">Avg Resolution</div></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ fcr_rate }}%</div><div class="text-muted">First Contact Resolution</div></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center bg-white"><div class="fs-4">{{ kb_linked_pct }}%</div><div class="text-muted">Resolved With Article</div></div></div>
+</div>
+
+<div class="card p-3 bg-white mb-4">
+  <h5>SLA Breaches (open, past SLA window)</h5>
+  <p class="fs-3 {% if breaches > 0 %}text-danger{% else %}text-success{% endif %}">{{ breaches }}</p>
+</div>
+
+<div class="card p-3 bg-white mb-4">
+  <h5>Knowledge Gap Report (shift left opportunities)</h5>
+  <p class="text-muted">A category with tickets and no published article is a gap. Writing an article there lets users self serve instead of raising a ticket.</p>
+  <table class="table table-sm">
+    <thead><tr><th>Category</th><th>Tickets</th><th>Published Articles</th><th>Resolved With Article</th><th></th></tr></thead>
+    <tbody>
+      {% for g in gaps %}
+      <tr class="{% if g.gap %}table-danger{% endif %}">
+        <td>{{ g.category }}</td><td>{{ g.tickets }}</td><td>{{ g.published }}</td><td>{{ g.coverage_pct }}%</td>
+        <td>{% if g.gap %}<span class="badge bg-danger">Gap: write an article</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card p-3 bg-white mb-4">
+  <h5>Content Maintenance: Articles Due for Review (over 90 days since update)</h5>
+  {% if review_due %}
+  <ul class="mb-0">
+    {% for a in review_due %}<li><a href="{{ url_for('kb_detail', article_id=a.id) }}">{{ a.title }}</a> (last updated {{ a.updated_at[:10] }})</li>{% endfor %}
+  </ul>
+  {% else %}<p class="mb-0 text-success">No articles overdue.</p>{% endif %}
+</div>
+
+<div class="card p-3 bg-white">
+  <h5>Tickets by Category</h5>
+  <ul class="list-group list-group-flush">
+    {% for cat, count in by_category.items() %}
+    <li class="list-group-item d-flex justify-content-between">{{ cat }} <span class="badge bg-secondary">{{ count }}</span></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
